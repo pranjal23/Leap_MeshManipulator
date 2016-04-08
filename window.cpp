@@ -13,8 +13,18 @@ Window::Window(QWidget *parent) :
     ui->setupUi(this);
 
     o_mesh = NULL;
+
     connect(this,SIGNAL(startParsing()),&mParseWorker,SLOT(parse()));
-    connect(&mParseWorker,SIGNAL(parseComplete(QSharedPointer<TriangleMesh>)),this,SLOT(render(QSharedPointer<TriangleMesh>)));
+
+    connect(&mParseWorker,
+            SIGNAL(parseComplete(QSharedPointer<TriangleMesh>)),
+            this,
+            SLOT(render(QSharedPointer<TriangleMesh>)));
+
+    connect(&leapActionSender,
+            SIGNAL(sendLeapAction()),
+            this,
+            SLOT(receiveLeapAction()));
 
     createActions();
     createMenus();
@@ -69,29 +79,8 @@ void Window::open(){
         lbl->show();
         movie->start();
 
-        /*
-        if(!use_multi_threading){
-
-            MFileParser mFileParser;
-            out_mesh = mFileParser.parseFile( filename );
-            if(out_mesh!=NULL)
-            {
-                ui->viewPortWidget->triangleMesh = out_mesh;
-                ui->viewPortWidget->updateGL();
-            }
-            else
-            {
-                qDebug() << "Mesh is NULL";
-            }
-            lbl->close();
-        }
-        else
-        {*/
-
         mParseWorker.setFileName(filename);
         emit startParsing();
-
-        //}
 
     }
 }
@@ -110,29 +99,16 @@ void Window::render(QSharedPointer<TriangleMesh> sp){
     lbl->close();
 }
 
-void Window::receiveHandAction(HAND_ACTION hand_action,
-                       ZOOML_TYPE zoom_type,
-                       ROTATE_DIRECTION rotate_direction,
-                       PAN_DIRECTION pan_direction,
-                       float strength)
+void Window::receiveLeapAction()
 {
+    qDebug() << "Received Empty Leap Action in Window...";
+    qDebug() << "Number of items in vector: " << QString::number(leapActionSender.actionVector->size());
 
-}
+    LeapAction leapAction = leapActionSender.actionVector->back();
+    qDebug() << "Number of items in vector: " << QString::fromStdString(leapAction.getActionName());
+    ui->viewPortWidget->changeCameraZoom(0.5f);
 
-void Window::connectHandMotionConverter(HandMotionConverter *handMotionConverter)
-{
-    connect(handMotionConverter,
-            SIGNAL(sendHandAction(HAND_ACTION hand_action,
-                              ZOOML_TYPE zoom_type,
-                              ROTATE_DIRECTION rotate_direction,
-                              PAN_DIRECTION pan_direction,
-                              float strength)),
-            this,
-            SLOT(receiveHandAction(HAND_ACTION hand_action,
-                                   ZOOML_TYPE zoom_type,
-                                   ROTATE_DIRECTION rotate_direction,
-                                   PAN_DIRECTION pan_direction,
-                                   float strength)));
+    leapActionSender.actionVector->pop_back();
 }
 
 void Window::on_enableLightBtn_clicked(bool checked)

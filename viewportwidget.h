@@ -44,8 +44,6 @@ public:
     void setRenderType(RENDER_TYPE type);
     void setAxisHeight(float height);
     void setLightPosition(float position);
-
-protected:
     void initializeGL();
     void paintGL();
     void resizeGL(int width, int height);

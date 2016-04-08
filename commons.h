@@ -1,13 +1,19 @@
 #ifndef COMMONS
 #define COMMONS
+#include <iostream>
+#include <cstring>
 
-enum HAND_ACTION { ZOOM, ROTATE, PAN };
+const std::string actionNames[] = {"ZOOM", "PAM", "ROTATE"};
 
-enum ZOOML_TYPE {ZOOM_IN, ZOOM_OUT};
+class Vector3D
+{
 
-enum ROTATE_DIRECTION {ROTATE_XY, ROTATE_YZ, ROTATE_XZ};
+public:
+    float x;
+    float y;
+    float z;
 
-enum PAN_DIRECTION {PAN_LEFT, PAN_RIGHT, PAN_UP, PAN_DOWN};
+};
 
 #endif // COMMONS
 

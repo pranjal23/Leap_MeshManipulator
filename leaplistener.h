@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstring>
 #include "Leap.h"
+#include "leapactionsender.h"
 
 using namespace Leap;
 
@@ -19,8 +20,10 @@ class LeapMotionListener : public Listener {
     virtual void onDeviceChange(const Controller&);
     virtual void onServiceConnect(const Controller&);
     virtual void onServiceDisconnect(const Controller&);
+    void setHandMotionConverter(LeapActionSender* handMotionConv);
 
   private:
+    LeapActionSender* leapActionSender;
 };
 
 #endif // SAMPLELISTENER_H

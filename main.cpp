@@ -26,6 +26,9 @@ int main(int argc, char *argv[])
     // Have the LeapMotion listener receive events from the controller
     controller.addListener(listener);
 
+    //HandMotionConverter
+    listener.setHandMotionConverter(&window.leapActionSender);
+
 
     if (((float)widgetArea / (float)desktopArea) < 0.75f)
         window.show();

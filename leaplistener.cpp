@@ -1,6 +1,5 @@
 #include "leaplistener.h"
 
-
 const std::string fingerNames[] = {"Thumb", "Index", "Middle", "Ring", "Pinky"};
 const std::string boneNames[] = {"Metacarpal", "Proximal", "Middle", "Distal"};
 const std::string stateNames[] = {"STATE_INVALID", "STATE_START", "STATE_UPDATE", "STATE_END"};
@@ -26,6 +25,11 @@ void LeapMotionListener::onExit(const Controller& controller) {
     std::cout << "Exited" << std::endl;
 }
 
+void LeapMotionListener::setHandMotionConverter(LeapActionSender* handMotionConv)
+{
+    leapActionSender = handMotionConv;
+}
+
 void LeapMotionListener::onFrame(const Controller& controller) {
     // Get the most recent frame and report some basic information
     const Frame frame = controller.frame();
@@ -47,9 +51,9 @@ void LeapMotionListener::onFrame(const Controller& controller) {
     const Hand leftmost = hands.leftmost();
     const Hand rightmost = hands.rightmost();
 
-    if(leftmost.isLeft() && rightmost.isRight())
+    if(leftmost.isRight() && rightmost.isLeft())
     {
-        std::cout << "Zoom Action Processing... " << std::endl;
+        std::cout << "Action Processing... " << std::endl;
     }
 
     /*
@@ -106,7 +110,10 @@ void LeapMotionListener::onFrame(const Controller& controller) {
                       << ", angle " << sweptAngle * RAD_TO_DEG
                       <<  ", " << clockwiseness << std::endl;
 
-
+            LeapAction* e = new LeapAction;
+            e->setActionName(actionNames[0]);
+            leapActionSender->actionVector->push_back(*e);
+            leapActionSender->emitEmptyAction();
             break;
         }
         case Gesture::TYPE_SWIPE:

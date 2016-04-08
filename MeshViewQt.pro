@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     viewportwidget.cpp \
     parseworker.cpp \
     leaplistener.cpp \
-    handmotionconverter.cpp
+    leapaction.cpp \
+    leapactionsender.cpp
 
 HEADERS  += window.h \
     trianglemesh.h \
@@ -26,8 +27,9 @@ HEADERS  += window.h \
     viewportwidget.h \
     parseworker.h \
     leaplistener.h \
-    handmotionconverter.h \
-    commons.h
+    commons.h \
+    leapaction.h \
+    leapactionsender.h
 
 FORMS    += window.ui
 

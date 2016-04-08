@@ -12,7 +12,8 @@
 
 #include "parseworker.h"
 #include "commons.h"
-#include "handmotionconverter.h"
+#include "leaplistener.h"
+#include "leapactionsender.h"
 
 namespace Ui {
 class Window;
@@ -26,6 +27,7 @@ public:
     explicit Window(QWidget *parent = 0);
     ~Window();
     TriangleMesh* o_mesh;
+    LeapActionSender leapActionSender;
 
 signals:
 
@@ -45,12 +47,7 @@ private:
 public slots:
     void open();
     void render(QSharedPointer<TriangleMesh> sp);
-    void receiveHandAction(HAND_ACTION hand_action,
-                           ZOOML_TYPE zoom_type,
-                           ROTATE_DIRECTION rotate_direction,
-                           PAN_DIRECTION pan_direction,
-                           float strength);
-    void connectHandMotionConverter(HandMotionConverter *handMotionConverter);
+    void receiveLeapAction();
 
 private slots:
     void on_enableLightBtn_clicked(bool checked);
