@@ -3,7 +3,8 @@
 #include <iostream>
 #include <cstring>
 
-const std::string actionNames[] = {"ZOOM", "PAM", "ROTATE"};
+//"ZOOM", "PAN", "ROTATE","MODE_CHANGE"
+const int actionNames[] = {0, 1, 2, 3};
 
 class Vector3D
 {

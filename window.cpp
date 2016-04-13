@@ -105,8 +105,65 @@ void Window::receiveLeapAction()
     qDebug() << "Number of items in vector: " << QString::number(leapActionSender.actionVector->size());
 
     LeapAction leapAction = leapActionSender.actionVector->back();
-    qDebug() << "Number of items in vector: " << QString::fromStdString(leapAction.getActionName());
-    ui->viewPortWidget->changeCameraZoom(0.5f);
+    const int command = leapAction.getActionName();
+    qDebug() << "Name: " << QString::number(command);
+
+    if(command==0)
+    {
+        //ZOOM
+        qDebug() << "IN ZOOM ";
+        float direction = leapAction.getAxisOfMotion()->z;
+
+        if( direction < 0.0)
+        {
+            ui->viewPortWidget->changeCameraZoom(-0.5f);
+        }
+        else if(direction > 0.0)
+        {
+            ui->viewPortWidget->changeCameraZoom(0.5f);
+        }
+    }
+    else if(command==1)
+    {
+        //PAN
+        qDebug() << "IN PAN ";
+        float directionX = leapAction.getAxisOfMotion()->x;
+
+        if( directionX < 0.0)
+        {
+            ui->viewPortWidget->changeCameraPositionOnXAxis(-0.5f);
+        }
+        else if(directionX > 0.0)
+        {
+            ui->viewPortWidget->changeCameraPositionOnXAxis(0.5f);
+        }
+
+        float directionY = leapAction.getAxisOfMotion()->y;
+
+        if( directionY < 0.0)
+        {
+            ui->viewPortWidget->changeCameraPositionOnYAxis(-0.5f);
+        }
+        else if(directionY > 0.0)
+        {
+            ui->viewPortWidget->changeCameraPositionOnYAxis(0.5f);
+        }
+    }
+    else if(command==2)
+    {
+        //ROTATE
+        qDebug() << "IN ROTATE ";
+    }
+    else if(command==3)
+    {
+        //CHANGE MODE
+        qDebug() << "IN MODE ";
+    }
+    else
+    {
+        //UNKNOWN MODE
+        qDebug() << "IN UNKNOWN MODE ";
+    }
 
     leapActionSender.actionVector->pop_back();
 }

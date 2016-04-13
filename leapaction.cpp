@@ -11,12 +11,12 @@ LeapAction::~LeapAction()
 }
 
 //Set & Get Name
-void LeapAction::setActionName(std::string actName)
+void LeapAction::setActionName(int actName)
 {
     actionName = actName;
 }
 
-std::string LeapAction::getActionName()
+int LeapAction::getActionName()
 {
     return actionName;
 }
@@ -32,12 +32,12 @@ float LeapAction::getAngleOfRotation()
     return angleOfRotation;
 }
 
-void LeapAction::setAxisOfRotation(Vector3D axis)
+void LeapAction::setAxisOfRotation(Vector3D *axis)
 {
     axisOfRotation = axis;
 }
 
-Vector3D LeapAction::getAxisOfRotation()
+Vector3D *LeapAction::getAxisOfRotation()
 {
     return axisOfRotation;
 }
@@ -53,12 +53,12 @@ float LeapAction::getMagnitudeOfMotion()
     return magnitudeOfMotion;
 }
 
-void LeapAction::setAxisOfMotion(Vector3D axis)
+void LeapAction::setAxisOfMotion(Vector3D *axis)
 {
     axisOfMotion = axis;
 }
 
-Vector3D LeapAction::getAxisOfMotion()
+Vector3D *LeapAction::getAxisOfMotion()
 {
     return axisOfMotion;
 }
