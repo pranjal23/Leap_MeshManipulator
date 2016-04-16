@@ -33,6 +33,9 @@ public:
     void setXAxisRotation(float angle);
     void setYAxisRotation(float angle);
     void setZAxisRotation(float angle);
+    float getXAxisRotation();
+    float getYAxisRotation();
+    float getZAxisRotation();
     void enableLight(bool checked);
     void enableMultilights(bool checked);
     void enableColorMaterial(bool checked);

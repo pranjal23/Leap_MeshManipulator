@@ -1,4 +1,5 @@
 #include "leaplistener.h"
+#include <QtCore/QtMath>
 
 const std::string stateNames[] = {"STATE_INVALID", "STATE_START", "STATE_UPDATE", "STATE_END"};
 
@@ -30,13 +31,13 @@ void LeapMotionListener::setHandMotionConverter(LeapActionSender* handMotionConv
 }
 
 bool firstModeChange = true;
-
+bool debug=false;
+int64_t last_ts = 0;
 void LeapMotionListener::onFrame(const Controller& controller) {
     // Get the most recent frame and report some basic information
     const Frame frame = controller.frame();
 
-    /*
-    if(false)
+    if(debug)
     {
         std::cout << "Frame id: " << frame.id()
                   << ", timestamp: " << frame.timestamp()
@@ -46,7 +47,6 @@ void LeapMotionListener::onFrame(const Controller& controller) {
                   << ", gestures: " << frame.gestures().count() << std::endl;
 
     }
-    */
 
     HandList hands = frame.hands();
     const Hand leftmost = hands.leftmost();
@@ -77,21 +77,51 @@ void LeapMotionListener::onFrame(const Controller& controller) {
     {
         // Get the first hand
         const Hand hand = hands.frontmost();
-        std::string handType = hand.isLeft() ? "Left hand" : "Right hand";
-        std::cout << std::string(2, ' ') << handType << ", id: " << hand.id()
-                  << ", palm position: " << hand.palmPosition() << std::endl;
-        // Get the hand's normal vector and direction
-        const Vector normal = hand.palmNormal();
-        const Vector direction = hand.direction();
 
-        // Calculate the hand's pitch, roll, and yaw angles
-        std::cout << std::string(2, ' ') <<  "pitch: " << direction.pitch() * RAD_TO_DEG << " degrees, "
-                  << "roll: " << normal.roll() * RAD_TO_DEG << " degrees, "
-                  << "yaw: " << direction.yaw() * RAD_TO_DEG << " degrees" << std::endl;
-
+        if(debug)
+        {
+            std::string handType = hand.isLeft() ? "Left hand" : "Right hand";
+            std::cout << std::string(2, ' ') << handType << ", id: " << hand.id()
+                      << ", palm position: " << hand.palmPosition() << std::endl;
+        }
 
         //TODO ROTATE
+         if(hand.pinchStrength()>0.8f)
+         {
 
+             int64_t curr_ts = frame.timestamp();
+             if((curr_ts - last_ts)>60000)
+             {
+                 // Get the hand's normal vector and direction
+                 const Vector normal = hand.palmNormal();
+                 const Vector direction = hand.direction();
+
+                 qreal yaw = direction.yaw();
+                 qreal pitch = direction.pitch();
+                 qreal roll = normal.roll();
+                 if(debug)
+                 {
+                     // Calculate the hand's pitch, roll, and yaw angles
+                     std::cout << std::string(2, ' ') <<  "pitch: " << direction.pitch() * RAD_TO_DEG << " degrees, "
+                               << "roll: " << normal.roll() * RAD_TO_DEG << " degrees, "
+                               << "yaw: " << direction.yaw() * RAD_TO_DEG << " degrees" << std::endl;
+                 }
+
+                 LeapAction* e = new LeapAction;
+                 e->setActionName(actionNames[2]);
+
+                 Vector3D* vect = new Vector3D;
+                 vect->x = pitch;
+                 vect->y = yaw;
+                 vect->z = roll;
+                 e->setAxisOfRotation(vect);
+
+                 leapActionSender->actionVector->push_back(*e);
+                 leapActionSender->emitEmptyAction();
+                 last_ts = frame.timestamp();
+             }
+
+         }
 
         // Gestures - PAN & ZOOM
         const GestureList gestures = frame.gestures();
@@ -123,13 +153,16 @@ void LeapMotionListener::onFrame(const Controller& controller) {
                 }
                 float angleInDegrees = sweptAngle * RAD_TO_DEG;
 
-                std::cout << std::string(2, ' ')
-                          << "Circle id: " << gesture.id()
-                          << ", state: " << stateNames[gesture.state()]
-                          << ", progress: " << circle.progress()
-                          << ", radius: " << circle.radius()
-                          << ", angle " << angleInDegrees
-                          <<  ", " << clockwiseness << std::endl;
+                if(debug)
+                {
+                    std::cout << std::string(2, ' ')
+                              << "Circle id: " << gesture.id()
+                              << ", state: " << stateNames[gesture.state()]
+                              << ", progress: " << circle.progress()
+                              << ", radius: " << circle.radius()
+                              << ", angle " << angleInDegrees
+                              <<  ", " << clockwiseness << std::endl;
+                }
 
                 if(angleInDegrees > 0)
                 {
@@ -139,7 +172,7 @@ void LeapMotionListener::onFrame(const Controller& controller) {
                     if(clockwisenessInt==1)
                     {
                         Vector3D* vect = new Vector3D;
-                        vect->x = 0;
+                        vect->x = 1;
                         vect->y = 0;
                         vect->z = 1;
                         e->setAxisOfMotion(vect);
@@ -147,7 +180,7 @@ void LeapMotionListener::onFrame(const Controller& controller) {
                     else if(clockwisenessInt==2)
                     {
                         Vector3D* vect = new Vector3D;
-                        vect->x = 0;
+                        vect->x = -1;
                         vect->y = 0;
                         vect->z = -1;
                         e->setAxisOfMotion(vect);
@@ -160,59 +193,34 @@ void LeapMotionListener::onFrame(const Controller& controller) {
                 break;
             }
 
-                //PAN
+            //PAN
             case Gesture::TYPE_SWIPE:
             {
                 SwipeGesture swipe = gesture;
 
-                std::cout << std::string(2, ' ')
-                          << "Swipe id: " << gesture.id()
-                          << ", state: " << stateNames[gesture.state()]
-                          << ", direction: " << swipe.direction()
-                          << ", speed: " << swipe.speed() << std::endl;
+                if(debug)
+                {
+                    std::cout << std::string(2, ' ')
+                              << "Swipe id: " << gesture.id()
+                              << ", state: " << stateNames[gesture.state()]
+                              << ", direction: " << swipe.direction()
+                              << ", speed: " << swipe.speed() << std::endl;
+                }
 
                 float x = swipe.direction().x;
                 float y = swipe.direction().y;
                 //float z = swipe.direction().z;
 
-                if(x > 0.5 && (y < 0.1 && y > -0.1))
-                {
-                    //SWIPE LEFT
-                    std::cout << "Swipe LEFT" << std::endl;
+                std::cout <<  "Swipe direction X:    " << x
+                           <<  ",     Swipe direction Y:    " << y << std::endl;
 
-                    LeapAction* e = new LeapAction;
-                    e->setActionName(actionNames[1]);
+                float strength = swipe.speed();
 
-                    Vector3D* vect = new Vector3D;
-                    vect->x = -1;
-                    vect->y = 0;
-                    vect->z = 0;
-                    e->setAxisOfMotion(vect);
 
-                    leapActionSender->actionVector->push_back(*e);
-                    leapActionSender->emitEmptyAction();
-                }
-                else if(x < -0.5 && (y < 0.1 && y > -0.1))
-                {
-                    //SWIPE RIGHT
-                    std::cout << "Swipe right" << std::endl;
-
-                    LeapAction* e = new LeapAction;
-                    e->setActionName(actionNames[1]);
-
-                    Vector3D* vect = new Vector3D;
-                    vect->x = 1;
-                    vect->y = 0;
-                    vect->z = 0;
-                    e->setAxisOfMotion(vect);
-
-                    leapActionSender->actionVector->push_back(*e);
-                    leapActionSender->emitEmptyAction();
-                }
-                else if(y > 0.5 && (x < 0.1 && x > -0.1))
+                if(y > 0.2 && (x < 0.2 && x > -0.2))
                 {
                     //SWIPE UP
-                    std::cout << "Swipe up" << std::endl;
+                    std::cout << "Swipe UP" << std::endl;
 
                     LeapAction* e = new LeapAction;
                     e->setActionName(actionNames[1]);
@@ -222,14 +230,16 @@ void LeapMotionListener::onFrame(const Controller& controller) {
                     vect->y = 1;
                     vect->z = 0;
                     e->setAxisOfMotion(vect);
+                    e->setMagnitudeOfMotion(strength);
 
                     leapActionSender->actionVector->push_back(*e);
                     leapActionSender->emitEmptyAction();
                 }
-                else if(y < -0.5 && (x < 0.1 && x > -0.1))
+
+                if(y < -0.2 && (x < 0.2 && x > -0.2))
                 {
                     //SWIPE DOWN
-                    std::cout << "Swipe down" << std::endl;
+                    std::cout << "Swipe DOWN" << std::endl;
                     LeapAction* e = new LeapAction;
                     e->setActionName(actionNames[1]);
 
@@ -238,6 +248,7 @@ void LeapMotionListener::onFrame(const Controller& controller) {
                     vect->y = -1;
                     vect->z = 0;
                     e->setAxisOfMotion(vect);
+                    e->setMagnitudeOfMotion(strength);
 
                     leapActionSender->actionVector->push_back(*e);
                     leapActionSender->emitEmptyAction();
@@ -251,7 +262,6 @@ void LeapMotionListener::onFrame(const Controller& controller) {
         }
 
     }
-
 }
 
 void LeapMotionListener::onFocusGained(const Controller& controller) {

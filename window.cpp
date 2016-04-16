@@ -102,17 +102,18 @@ void Window::render(QSharedPointer<TriangleMesh> sp){
 int m_Mode = 0;
 void Window::receiveLeapAction()
 {
-    qDebug() << "Received Empty Leap Action in Window...";
-    qDebug() << "Number of items in vector: " << QString::number(leapActionSender.actionVector->size());
+    //qDebug() << "Received Empty Leap Action in Window...";
+    //qDebug() << "Number of items in vector: " << QString::number(leapActionSender.actionVector->size());
 
     LeapAction leapAction = leapActionSender.actionVector->back();
     const int command = leapAction.getActionName();
-    qDebug() << "Name: " << QString::number(command);
+    //qDebug() << "Name: " << QString::number(command);
 
     if(command==0 && m_Mode == 0)
     {
         //ZOOM
-        qDebug() << "IN ZOOM ";
+        //qDebug() << "IN ZOOM ";
+
         float direction = leapAction.getAxisOfMotion()->z;
 
         if( direction < 0.0)
@@ -124,41 +125,69 @@ void Window::receiveLeapAction()
             ui->viewPortWidget->changeCameraZoom(0.5f);
         }
     }
-    else if(command==1 && m_Mode == 1)
+    else if((command == 1 || command == 0) && m_Mode == 1)
     {
         //PAN
-        qDebug() << "IN PAN ";
-        float directionX = leapAction.getAxisOfMotion()->x;
+        float directionX = leapAction.getAxisOfMotion()->z;
+        if(command == 0)
+        {
+            if( directionX < 0.0)
+            {
+                ui->viewPortWidget->changeCameraPositionOnXAxis(-0.1f);
+            }
 
-        if( directionX < 0.0)
-        {
-            ui->viewPortWidget->changeCameraPositionOnXAxis(-0.5f);
-        }
-        else if(directionX > 0.0)
-        {
-            ui->viewPortWidget->changeCameraPositionOnXAxis(0.5f);
+            if(directionX > 0.0)
+            {
+                ui->viewPortWidget->changeCameraPositionOnXAxis(0.1f );
+            }
         }
 
-        float directionY = leapAction.getAxisOfMotion()->y;
+        if(command == 1)
+        {
+            //float directionX = leapAction.getAxisOfMotion()->x;
+            float directionY = leapAction.getAxisOfMotion()->y;
+            //int speed = ((int)leapAction.getMagnitudeOfMotion()) % 100;
 
-        if( directionY < 0.0)
-        {
-            ui->viewPortWidget->changeCameraPositionOnYAxis(-0.5f);
-        }
-        else if(directionY > 0.0)
-        {
-            ui->viewPortWidget->changeCameraPositionOnYAxis(0.5f);
+            /*
+            qDebug() << "IN PAN: " << "DirectionX" << QString::number(directionX)
+                                   << ", DirectionY" << QString::number(directionY)
+                                   << ", speed" << QString::number(speed);
+            */
+
+            if( directionY < 0.0)
+            {
+                ui->viewPortWidget->changeCameraPositionOnYAxis(-0.1f);
+            }
+
+            if(directionY > 0.0)
+            {
+                ui->viewPortWidget->changeCameraPositionOnYAxis(0.1f );
+            }
         }
     }
     else if(command==2 && m_Mode == 2)
     {
         //ROTATE
-        qDebug() << "IN ROTATE ";
+        //qDebug() << "IN ROTATE ";
+
+        Vector3D* rotation = leapAction.getAxisOfRotation();
+
+        qDebug() << "Rotation in X: " << QString::number(rotation->x);
+        qDebug() << "Rotation in Y: " << QString::number(rotation->y);
+        qDebug() << "Rotation in Z: " << QString::number(rotation->z);
+
+        float xAxisRotation = ui->viewPortWidget->getXAxisRotation() + rotation->x;
+        float yAxisRotation = ui->viewPortWidget->getYAxisRotation() + rotation->y;
+        float zAxisRotation = ui->viewPortWidget->getZAxisRotation() + rotation->z;
+
+        ui->viewPortWidget->setXAxisRotation(xAxisRotation);
+        ui->viewPortWidget->setYAxisRotation(yAxisRotation);
+        ui->viewPortWidget->setZAxisRotation(zAxisRotation);
     }
     else if(command==3)
     {
         //CHANGE MODE
-        qDebug() << "IN MODE ";
+        //qDebug() << "IN MODE ";
 
         if(m_Mode<2)
             m_Mode++;
@@ -175,7 +204,7 @@ void Window::receiveLeapAction()
     else
     {
         //UNKNOWN MODE
-        qDebug() << "IN UNKNOWN MODE ";
+        //qDebug() << "IN UNKNOWN MODE ";
     }
 
     leapActionSender.actionVector->pop_back();

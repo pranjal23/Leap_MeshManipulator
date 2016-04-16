@@ -736,6 +736,21 @@ void ViewPortWidget::setLightPosition(float position){
     updateGL();
 }
 
+float ViewPortWidget::getXAxisRotation()
+{
+    return xAxisRotation;
+}
+
+float ViewPortWidget::getYAxisRotation()
+{
+    return yAxisRotation;
+}
+
+float ViewPortWidget::getZAxisRotation()
+{
+    return zAxisRotation;
+}
+
 QVector3D ViewPortWidget::getLookAtVector()
 {
     GLfloat mat[16];
