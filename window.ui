@@ -69,6 +69,11 @@
           <height>166667</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>36</pointsize>
+         </font>
+        </property>
        </widget>
       </item>
       <item>
@@ -89,417 +94,36 @@
          <bool>false</bool>
         </property>
         <property name="title">
-         <string>Transforms</string>
+         <string>ACTION</string>
         </property>
-        <widget class="QGroupBox" name="groupBox_3">
+        <widget class="QTextEdit" name="actionNameTextEdit">
          <property name="geometry">
           <rect>
-           <x>30</x>
+           <x>10</x>
            <y>320</y>
-           <width>191</width>
-           <height>141</height>
+           <width>241</width>
+           <height>51</height>
           </rect>
          </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="title">
-          <string>Lights</string>
-         </property>
-         <widget class="QPushButton" name="enableLightBtn">
-          <property name="geometry">
-           <rect>
-            <x>40</x>
-            <y>10</y>
-            <width>113</width>
-            <height>32</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Lights On</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-          <property name="autoDefault">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="multilightsBtn">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="geometry">
-           <rect>
-            <x>40</x>
-            <y>40</y>
-            <width>113</width>
-            <height>32</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Multiple Lights</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="colorMatBtn">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="geometry">
-           <rect>
-            <x>40</x>
-            <y>70</y>
-            <width>113</width>
-            <height>32</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Color Material</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QSlider" name="lightSlider">
-          <property name="geometry">
-           <rect>
-            <x>20</x>
-            <y>110</y>
-            <width>160</width>
-            <height>22</height>
-           </rect>
-          </property>
-          <property name="minimum">
-           <number>0</number>
-          </property>
-          <property name="maximum">
-           <number>50</number>
-          </property>
-          <property name="sliderPosition">
-           <number>10</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </widget>
-        <widget class="QGroupBox" name="groupBox">
-         <property name="geometry">
-          <rect>
-           <x>30</x>
-           <y>170</y>
-           <width>191</width>
-           <height>151</height>
-          </rect>
+         <property name="font">
+          <font>
+           <family>Helvetica Neue</family>
+           <pointsize>36</pointsize>
+          </font>
          </property>
          <property name="autoFillBackground">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
-         <property name="title">
-          <string>Projection</string>
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
-         <widget class="QPushButton" name="orthographicBtn">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="geometry">
-           <rect>
-            <x>42</x>
-            <y>20</y>
-            <width>111</width>
-            <height>32</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Orthographic</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="perspectiveBtn">
-          <property name="geometry">
-           <rect>
-            <x>40</x>
-            <y>110</y>
-            <width>113</width>
-            <height>32</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Perspective</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QGroupBox" name="groupBox_5">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>50</y>
-            <width>191</width>
-            <height>51</height>
-           </rect>
-          </property>
-          <property name="autoFillBackground">
-           <bool>false</bool>
-          </property>
-          <property name="title">
-           <string>Plane</string>
-          </property>
-          <widget class="QRadioButton" name="xyRb">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>20</y>
-             <width>41</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>XY</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="xzRb">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="geometry">
-            <rect>
-             <x>80</x>
-             <y>20</y>
-             <width>41</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>XZ</string>
-           </property>
-          </widget>
-          <widget class="QRadioButton" name="yzRb">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="geometry">
-            <rect>
-             <x>130</x>
-             <y>20</y>
-             <width>41</width>
-             <height>20</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>YZ</string>
-           </property>
-          </widget>
-         </widget>
-        </widget>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="geometry">
-          <rect>
-           <x>30</x>
-           <y>20</y>
-           <width>191</width>
-           <height>151</height>
-          </rect>
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Helvetica Neue'; font-size:36pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Helvetica'; font-size:48pt;&quot;&gt;ZOOM&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="title">
-          <string>Rendering</string>
-         </property>
-         <widget class="QRadioButton" name="pointsRb">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>30</y>
-            <width>100</width>
-            <height>20</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Points</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="wireframeRb">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>60</y>
-            <width>100</width>
-            <height>20</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Wireframe</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="flatShadingRb">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>90</y>
-            <width>100</width>
-            <height>20</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Flat shading</string>
-          </property>
-         </widget>
-         <widget class="QRadioButton" name="smoothShadingRb">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>120</y>
-            <width>121</width>
-            <height>20</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Smooth shading</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </widget>
-        <widget class="QGroupBox" name="groupBox_4">
-         <property name="geometry">
-          <rect>
-           <x>30</x>
-           <y>460</y>
-           <width>191</width>
-           <height>171</height>
-          </rect>
-         </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="title">
-          <string>Visual Cues</string>
-         </property>
-         <widget class="QPushButton" name="boundBoxBtn">
-          <property name="geometry">
-           <rect>
-            <x>40</x>
-            <y>20</y>
-            <width>113</width>
-            <height>32</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Bounding Box</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="groundBtn">
-          <property name="geometry">
-           <rect>
-            <x>40</x>
-            <y>50</y>
-            <width>113</width>
-            <height>32</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Ground</string>
-          </property>
-          <property name="checkable">
-           <bool>true</bool>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-         <widget class="QGroupBox" name="groupBox_6">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>80</y>
-            <width>191</width>
-            <height>91</height>
-           </rect>
-          </property>
-          <property name="title">
-           <string>Axis</string>
-          </property>
-          <widget class="QPushButton" name="axisBtn">
-           <property name="geometry">
-            <rect>
-             <x>40</x>
-             <y>20</y>
-             <width>113</width>
-             <height>32</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Axis</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-          <widget class="QSlider" name="axisLengthSlider">
-           <property name="geometry">
-            <rect>
-             <x>20</x>
-             <y>60</y>
-             <width>160</width>
-             <height>22</height>
-            </rect>
-           </property>
-           <property name="maximum">
-            <number>100</number>
-           </property>
-           <property name="singleStep">
-            <number>1</number>
-           </property>
-           <property name="value">
-            <number>10</number>
-           </property>
-           <property name="sliderPosition">
-            <number>10</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </widget>
         </widget>
        </widget>
       </item>

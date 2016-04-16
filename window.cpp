@@ -99,6 +99,7 @@ void Window::render(QSharedPointer<TriangleMesh> sp){
     lbl->close();
 }
 
+int m_Mode = 0;
 void Window::receiveLeapAction()
 {
     qDebug() << "Received Empty Leap Action in Window...";
@@ -108,7 +109,7 @@ void Window::receiveLeapAction()
     const int command = leapAction.getActionName();
     qDebug() << "Name: " << QString::number(command);
 
-    if(command==0)
+    if(command==0 && m_Mode == 0)
     {
         //ZOOM
         qDebug() << "IN ZOOM ";
@@ -123,7 +124,7 @@ void Window::receiveLeapAction()
             ui->viewPortWidget->changeCameraZoom(0.5f);
         }
     }
-    else if(command==1)
+    else if(command==1 && m_Mode == 1)
     {
         //PAN
         qDebug() << "IN PAN ";
@@ -149,7 +150,7 @@ void Window::receiveLeapAction()
             ui->viewPortWidget->changeCameraPositionOnYAxis(0.5f);
         }
     }
-    else if(command==2)
+    else if(command==2 && m_Mode == 2)
     {
         //ROTATE
         qDebug() << "IN ROTATE ";
@@ -158,6 +159,18 @@ void Window::receiveLeapAction()
     {
         //CHANGE MODE
         qDebug() << "IN MODE ";
+
+        if(m_Mode<2)
+            m_Mode++;
+        else
+            m_Mode=0;
+
+        if(m_Mode==0)
+            ui->actionNameTextEdit->setText("ZOOM");
+        else if(m_Mode==1)
+            ui->actionNameTextEdit->setText("PAN");
+        else if(m_Mode==2)
+            ui->actionNameTextEdit->setText("ROTATE");
     }
     else
     {
@@ -168,134 +181,3 @@ void Window::receiveLeapAction()
     leapActionSender.actionVector->pop_back();
 }
 
-void Window::on_enableLightBtn_clicked(bool checked)
-{
-    ui->viewPortWidget->enableLight(checked);
-    if(!checked)
-    {
-        ui->multilightsBtn->setChecked(false);
-        ui->multilightsBtn->setEnabled(false);
-        ui->lightSlider->setEnabled(false);
-        ui->colorMatBtn->setChecked(false);
-        ui->colorMatBtn->setEnabled(false);
-    }
-    else
-    {
-        ui->multilightsBtn->setEnabled(true);
-        ui->colorMatBtn->setEnabled(true);
-        ui->lightSlider->setEnabled(true);
-    }
-}
-
-void Window::on_multilightsBtn_clicked(bool checked)
-{
-        ui->viewPortWidget->enableMultilights(checked);
-}
-
-void Window::on_colorMatBtn_clicked(bool checked)
-{
-    ui->viewPortWidget->enableColorMaterial(checked);
-}
-
-void Window::on_perspectiveBtn_clicked(bool checked)
-{
-        ui->orthographicBtn->setChecked(!checked);
-        ui->viewPortWidget->setPerspectiveProjection(checked);
-        if(!checked){
-            ui->xyRb->setEnabled(true);
-            ui->xzRb->setEnabled(true);
-            ui->yzRb->setEnabled(true);
-        } else {
-            ui->xyRb->setEnabled(false);
-            ui->xzRb->setEnabled(false);
-            ui->yzRb->setEnabled(false);
-        }
-}
-
-void Window::on_orthographicBtn_clicked(bool checked)
-{
-        ui->perspectiveBtn->setChecked(!checked);
-        ui->viewPortWidget->setPerspectiveProjection(!checked);
-        if(checked){
-            ui->xyRb->setEnabled(true);
-            ui->xzRb->setEnabled(true);
-            ui->yzRb->setEnabled(true);
-        } else {
-            ui->xyRb->setEnabled(false);
-            ui->xzRb->setEnabled(false);
-            ui->yzRb->setEnabled(false);
-        }
-}
-
-void Window::on_xyRb_toggled(bool checked)
-{
-    if(checked)
-        ui->viewPortWidget->setOrthoView(ViewPortWidget::XY);
-}
-
-void Window::on_xzRb_toggled(bool checked)
-{
-    if(checked)
-        ui->viewPortWidget->setOrthoView(ViewPortWidget::XZ);
-}
-
-void Window::on_yzRb_toggled(bool checked)
-{
-    if(checked)
-        ui->viewPortWidget->setOrthoView(ViewPortWidget::YZ);
-}
-
-void Window::on_boundBoxBtn_clicked(bool checked)
-{
-    ui->viewPortWidget->showBoundingBox(checked);
-}
-
-void Window::on_groundBtn_clicked(bool checked)
-{
-    ui->viewPortWidget->showGround(checked);
-}
-
-void Window::on_axisBtn_clicked(bool checked)
-{
-    ui->viewPortWidget->showAxis(checked);
-    if(checked)
-        ui->axisLengthSlider->setEnabled(true);
-    else
-        ui->axisLengthSlider->setEnabled(false);
-}
-
-void Window::on_smoothShadingRb_toggled(bool checked)
-{
-    if(checked)
-        ui->viewPortWidget->setRenderType(ViewPortWidget::SMOOTH_SHADING);
-}
-
-void Window::on_flatShadingRb_toggled(bool checked)
-{
-    if(checked)
-        ui->viewPortWidget->setRenderType(ViewPortWidget::FLAT_SHADING);
-}
-
-void Window::on_wireframeRb_toggled(bool checked)
-{
-    if(checked)
-        ui->viewPortWidget->setRenderType(ViewPortWidget::WIREFRAME);
-}
-
-void Window::on_pointsRb_toggled(bool checked)
-{
-    if(checked)
-        ui->viewPortWidget->setRenderType(ViewPortWidget::POINTS);
-}
-
-void Window::on_axisLengthSlider_sliderMoved(int value)
-{
-    float height = value/10.0f;
-    ui->viewPortWidget->setAxisHeight(height);
-}
-
-void Window::on_lightSlider_sliderMoved(int position)
-{
-    float z_position = position/2.0f;
-    ui->viewPortWidget->setLightPosition(z_position);
-}

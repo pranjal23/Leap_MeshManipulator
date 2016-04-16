@@ -49,26 +49,6 @@ public slots:
     void render(QSharedPointer<TriangleMesh> sp);
     void receiveLeapAction();
 
-private slots:
-    void on_enableLightBtn_clicked(bool checked);
-    void on_multilightsBtn_clicked(bool checked);
-    void on_perspectiveBtn_clicked(bool checked);
-    void on_orthographicBtn_clicked(bool checked);
-    void on_boundBoxBtn_clicked(bool checked);
-    void on_groundBtn_clicked(bool checked);
-    void on_axisBtn_clicked(bool checked);
-    void on_smoothShadingRb_toggled(bool checked);
-    void on_flatShadingRb_toggled(bool checked);
-    void on_wireframeRb_toggled(bool checked);
-    void on_pointsRb_toggled(bool checked);
-    void on_colorMatBtn_clicked(bool checked);
-    void on_xyRb_toggled(bool checked);
-    void on_xzRb_toggled(bool checked);
-    void on_yzRb_toggled(bool checked);
-    void on_axisLengthSlider_sliderMoved(int value);
-
-    void on_lightSlider_sliderMoved(int position);
-
 signals:
     void startParsing();
 };
