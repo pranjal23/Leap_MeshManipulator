@@ -71,57 +71,78 @@ void LeapMotionListener::onFrame(const Controller& controller) {
         firstModeChange = true;
     }
 
-
-
     if(hands.count()==1)
     {
         // Get the first hand
         const Hand hand = hands.frontmost();
+        int fingerCount = hand.fingers().extended().count();
 
-        if(debug)
+        int64_t curr_ts = frame.timestamp();
+        if( (fingerCount < 3) &&(curr_ts - last_ts)>180000)
         {
-            std::string handType = hand.isLeft() ? "Left hand" : "Right hand";
-            std::cout << std::string(2, ' ') << handType << ", id: " << hand.id()
-                      << ", palm position: " << hand.palmPosition() << std::endl;
+            // Get the hand's normal vector and direction
+            const Vector normal = hand.palmNormal();
+            const Vector direction = hand.direction();
+
+            qreal yaw = direction.yaw();
+            qreal pitch = direction.pitch();
+            qreal roll = normal.roll();
+            if(debug)
+            {
+                // Calculate the hand's pitch, roll, and yaw angles
+                std::cout << std::string(2, ' ') <<  "pitch: " << direction.pitch() * RAD_TO_DEG << " degrees, "
+                          << "roll: " << normal.roll() * RAD_TO_DEG << " degrees, "
+                          << "yaw: " << direction.yaw() * RAD_TO_DEG << " degrees" << std::endl;
+            }
+
+
+            if(fingerCount==1)
+            {
+                LeapAction* e = new LeapAction;
+                e->setActionName(actionNames[2]);
+
+                Vector3D* vect = new Vector3D;
+                vect->x = pitch;
+                vect->y = 0;
+                vect->z = 0;
+                e->setAxisOfRotation(vect);
+
+                leapActionSender->actionVector->push_back(*e);
+                leapActionSender->emitEmptyAction();
+                last_ts = frame.timestamp();
+            }
+            else if(fingerCount==2)
+            {
+                LeapAction* e = new LeapAction;
+                e->setActionName(actionNames[2]);
+
+                Vector3D* vect = new Vector3D;
+                vect->x = 0;
+                vect->y = yaw;
+                vect->z = 0;
+                e->setAxisOfRotation(vect);
+
+                leapActionSender->actionVector->push_back(*e);
+                leapActionSender->emitEmptyAction();
+                last_ts = frame.timestamp();
+            }
+            else if(fingerCount==0)
+            {
+                LeapAction* e = new LeapAction;
+                e->setActionName(actionNames[2]);
+
+                Vector3D* vect = new Vector3D;
+                vect->x = 0;
+                vect->y = 0;
+                vect->z = roll;
+                e->setAxisOfRotation(vect);
+
+                leapActionSender->actionVector->push_back(*e);
+                leapActionSender->emitEmptyAction();
+                last_ts = frame.timestamp();
+            }
+
         }
-
-        //TODO ROTATE
-         if(hand.pinchStrength()>0.8f)
-         {
-
-             int64_t curr_ts = frame.timestamp();
-             if((curr_ts - last_ts)>60000)
-             {
-                 // Get the hand's normal vector and direction
-                 const Vector normal = hand.palmNormal();
-                 const Vector direction = hand.direction();
-
-                 qreal yaw = direction.yaw();
-                 qreal pitch = direction.pitch();
-                 qreal roll = normal.roll();
-                 if(debug)
-                 {
-                     // Calculate the hand's pitch, roll, and yaw angles
-                     std::cout << std::string(2, ' ') <<  "pitch: " << direction.pitch() * RAD_TO_DEG << " degrees, "
-                               << "roll: " << normal.roll() * RAD_TO_DEG << " degrees, "
-                               << "yaw: " << direction.yaw() * RAD_TO_DEG << " degrees" << std::endl;
-                 }
-
-                 LeapAction* e = new LeapAction;
-                 e->setActionName(actionNames[2]);
-
-                 Vector3D* vect = new Vector3D;
-                 vect->x = pitch;
-                 vect->y = yaw;
-                 vect->z = roll;
-                 e->setAxisOfRotation(vect);
-
-                 leapActionSender->actionVector->push_back(*e);
-                 leapActionSender->emitEmptyAction();
-                 last_ts = frame.timestamp();
-             }
-
-         }
 
         // Gestures - PAN & ZOOM
         const GestureList gestures = frame.gestures();
@@ -133,67 +154,72 @@ void LeapMotionListener::onFrame(const Controller& controller) {
             //ZOOM
             case Gesture::TYPE_CIRCLE:
             {
-                CircleGesture circle = gesture;
-                std::string clockwiseness;
-                int clockwisenessInt = 0;
-
-                if (circle.pointable().direction().angleTo(circle.normal()) <= PI/2) {
-                    clockwiseness = "clockwise";
-                    clockwisenessInt = 1;
-                } else {
-                    clockwiseness = "counterclockwise";
-                    clockwisenessInt = 2;
-                }
-
-                // Calculate angle swept since last frame
-                float sweptAngle = 0;
-                if (circle.state() != Gesture::STATE_START) {
-                    CircleGesture previousUpdate = CircleGesture(controller.frame(1).gesture(circle.id()));
-                    sweptAngle = (circle.progress() - previousUpdate.progress()) * 2 * PI;
-                }
-                float angleInDegrees = sweptAngle * RAD_TO_DEG;
-
-                if(debug)
+                int64_t curr_ts = frame.timestamp();
+                if((curr_ts - last_ts)>10000)
                 {
-                    std::cout << std::string(2, ' ')
-                              << "Circle id: " << gesture.id()
-                              << ", state: " << stateNames[gesture.state()]
-                              << ", progress: " << circle.progress()
-                              << ", radius: " << circle.radius()
-                              << ", angle " << angleInDegrees
-                              <<  ", " << clockwiseness << std::endl;
-                }
+                    CircleGesture circle = gesture;
+                    std::string clockwiseness;
+                    int clockwisenessInt = 0;
 
-                if(angleInDegrees > 0)
-                {
-                    LeapAction* e = new LeapAction;
-                    e->setActionName(actionNames[0]);
-
-                    if(clockwisenessInt==1)
-                    {
-                        Vector3D* vect = new Vector3D;
-                        vect->x = 1;
-                        vect->y = 0;
-                        vect->z = 1;
-                        e->setAxisOfMotion(vect);
-                    }
-                    else if(clockwisenessInt==2)
-                    {
-                        Vector3D* vect = new Vector3D;
-                        vect->x = -1;
-                        vect->y = 0;
-                        vect->z = -1;
-                        e->setAxisOfMotion(vect);
+                    if (circle.pointable().direction().angleTo(circle.normal()) <= PI/2) {
+                        clockwiseness = "clockwise";
+                        clockwisenessInt = 1;
+                    } else {
+                        clockwiseness = "counterclockwise";
+                        clockwisenessInt = 2;
                     }
 
-                    leapActionSender->actionVector->push_back(*e);
-                    leapActionSender->emitEmptyAction();
+                    // Calculate angle swept since last frame
+                    float sweptAngle = 0;
+                    if (circle.state() != Gesture::STATE_START) {
+                        CircleGesture previousUpdate = CircleGesture(controller.frame(1).gesture(circle.id()));
+                        sweptAngle = (circle.progress() - previousUpdate.progress()) * 2 * PI;
+                    }
+                    float angleInDegrees = sweptAngle * RAD_TO_DEG;
+
+                    if(debug)
+                    {
+                        std::cout << std::string(2, ' ')
+                                  << "Circle id: " << gesture.id()
+                                  << ", state: " << stateNames[gesture.state()]
+                                  << ", progress: " << circle.progress()
+                                  << ", radius: " << circle.radius()
+                                  << ", angle " << angleInDegrees
+                                  <<  ", " << clockwiseness << std::endl;
+                    }
+
+                    if(angleInDegrees > 0)
+                    {
+                        LeapAction* e = new LeapAction;
+                        e->setActionName(actionNames[0]);
+
+                        if(clockwisenessInt==1)
+                        {
+                            Vector3D* vect = new Vector3D;
+                            vect->x = 1;
+                            vect->y = 0;
+                            vect->z = 1;
+                            e->setAxisOfMotion(vect);
+                        }
+                        else if(clockwisenessInt==2)
+                        {
+                            Vector3D* vect = new Vector3D;
+                            vect->x = -1;
+                            vect->y = 0;
+                            vect->z = -1;
+                            e->setAxisOfMotion(vect);
+                        }
+
+                        leapActionSender->actionVector->push_back(*e);
+                        leapActionSender->emitEmptyAction();
+                    }
+                    last_ts = frame.timestamp();
                 }
 
                 break;
             }
 
-            //PAN
+                //PAN
             case Gesture::TYPE_SWIPE:
             {
                 SwipeGesture swipe = gesture;
@@ -265,7 +291,7 @@ void LeapMotionListener::onFrame(const Controller& controller) {
 }
 
 void LeapMotionListener::onFocusGained(const Controller& controller) {
-     Q_UNUSED( controller )
+    Q_UNUSED( controller )
     std::cout << "Focus Gained" << std::endl;
 }
 
