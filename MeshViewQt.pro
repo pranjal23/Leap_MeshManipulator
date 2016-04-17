@@ -9,6 +9,10 @@ TEMPLATE = app
 win32 {
     LIBS+=-lopengl32
     LIBS+=-lglu32
+    LIBS += -L$$PWD/../../LeapSDK/lib/x64/ -lLeap
+
+    INCLUDEPATH += $$PWD/../../LeapSDK/include
+    DEPENDPATH += $$PWD/../../LeapSDK/include
 }
 
 SOURCES += main.cpp\
@@ -36,7 +40,10 @@ FORMS    += window.ui
 RESOURCES += \
     meshviewer_resources.qrc
 
-macx: LIBS += -L$$PWD/../../LeapSDK/lib/ -lLeap
+macx {
+     LIBS += -L$$PWD/../../LeapSDK/lib/ -lLeap
 
-INCLUDEPATH += $$PWD/../../LeapSDK/include
-DEPENDPATH += $$PWD/../../LeapSDK/include
+    INCLUDEPATH += $$PWD/../../LeapSDK/include
+    DEPENDPATH += $$PWD/../../LeapSDK/include
+}
+
